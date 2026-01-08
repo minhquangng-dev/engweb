@@ -1,0 +1,1110 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Học từ vựng - English Blossom</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes flip {
+      0% { transform: rotateY(0); }
+      100% { transform: rotateY(180deg); }
+    }
+    
+    @keyframes flipBack {
+      0% { transform: rotateY(180deg); }
+      100% { transform: rotateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #fce7f3 0%, #ffffff 50%, #fff1f2 100%);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .btn-pink {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+    }
+    
+    .btn-pink:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
+    }
+    
+    .card-3d {
+      perspective: 1000px;
+      transition: transform 0.3s ease;
+    }
+    
+    .card-3d:hover {
+      transform: translateY(-5px);
+    }
+    
+    .flashcard {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+    
+    .flashcard.flipped {
+      transform: rotateY(180deg);
+    }
+    
+    .flashcard-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.5rem;
+      padding: 2rem;
+    }
+    
+    .flashcard-back {
+      transform: rotateY(180deg);
+    }
+    
+    .game-card {
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    
+    .game-card.matched {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .game-card.flipped {
+      transform: rotateY(180deg);
+    }
+    
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.5rem;
+    }
+    
+    .word-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+      background: white;
+      border: 2px solid #fbcfe8;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .word-cell:hover {
+      background: #fce7f3;
+      transform: scale(1.1);
+    }
+    
+    .word-cell.selected {
+      background: #ec4899;
+      color: white;
+      border-color: #ec4899;
+    }
+    
+    .word-cell.found {
+      background: #86efac;
+      color: #166534;
+      border-color: #86efac;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background: #fbcfe8;
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+      transition: width 0.3s ease;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full">
+  <div id="app" class="w-full h-full overflow-auto gradient-bg"><!-- Header -->
+   <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+     <div class="flex items-center"><span class="text-4xl mr-3">🌸</span>
+      <div>
+       <h1 id="pageTitle" class="text-2xl font-bold gradient-text">Học từ vựng</h1>
+       <p class="text-sm text-gray-600">Chọn chế độ học phù hợp với bạn</p>
+      </div>
+     </div><button onclick="showSection('menu')" class="btn-pink text-white px-6 py-2 rounded-xl font-semibold"> 📚 Menu </button>
+    </div>
+   </header>
+   <main class="max-w-7xl mx-auto px-6 py-8"><!-- Main Menu -->
+    <section id="menu" class="fade-in">
+     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="card-3d bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="showSection('assessment')">
+       <div class="text-5xl mb-4 text-center">
+        🎯
+       </div>
+       <h3 id="assessmentTitle" class="text-xl font-bold text-center mb-2 gradient-text">Đánh giá trình độ</h3>
+       <p class="text-gray-600 text-center text-sm">Test 10 câu để xác định level của bạn</p>
+      </div>
+      <div class="card-3d bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="showSection('learning')">
+       <div class="text-5xl mb-4 text-center">
+        📖
+       </div>
+       <h3 id="learningTitle" class="text-xl font-bold text-center mb-2 gradient-text">Học từ mới</h3>
+       <p class="text-gray-600 text-center text-sm">Flashcard và từ vựng theo level</p>
+      </div>
+      <div class="card-3d bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="showSection('games')">
+       <div class="text-5xl mb-4 text-center">
+        🎮
+       </div>
+       <h3 id="gamesTitle" class="text-xl font-bold text-center mb-2 gradient-text">Trò chơi</h3>
+       <p class="text-gray-600 text-center text-sm">Matching, Word Hunt, Speed Match</p>
+      </div>
+      <div class="card-3d bg-white rounded-2xl p-6 shadow-lg cursor-pointer" onclick="showSection('test')">
+       <div class="text-5xl mb-4 text-center">
+        ✅
+       </div>
+       <h3 id="testTitle" class="text-xl font-bold text-center mb-2 gradient-text">Bài kiểm tra</h3>
+       <p class="text-gray-600 text-center text-sm">Multiple Choice &amp; Fill in Blank</p>
+      </div>
+     </div>
+    </section><!-- Assessment Section -->
+    <section id="assessment" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold gradient-text mb-6 text-center">🎯 Đánh giá trình độ</h2>
+      <div id="assessmentQuiz" class="space-y-6">
+       <div class="mb-4">
+        <div class="flex justify-between text-sm text-gray-600 mb-2"><span>Câu hỏi <span id="assessmentCurrent">1</span>/30</span> <span id="assessmentScore">Tiến độ: 0/30</span>
+        </div>
+        <div class="progress-bar">
+         <div id="assessmentProgress" class="progress-fill" style="width: 10%"></div>
+        </div>
+       </div>
+       <div id="assessmentQuestion" class="bg-pink-50 p-6 rounded-xl">
+        <p class="text-lg font-semibold mb-4">What does "happy" mean?</p>
+        <div class="space-y-3"><button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors"> A. Vui vẻ </button> <button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors"> B. Buồn bã </button> <button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors"> C. Tức giận </button> <button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors"> D. Sợ hãi </button>
+        </div>
+       </div>
+      </div>
+      <div id="assessmentResult" class="hidden text-center">
+       <div class="text-6xl mb-4">
+        🎉
+       </div>
+       <h3 class="text-2xl font-bold gradient-text mb-4">Kết quả đánh giá</h3>
+        <div class="bg-pink-50 p-6 rounded-xl mb-6">
+         <p class="text-lg mb-2">Điểm số: <span id="finalScore" class="font-bold text-pink-600">0</span>%</p>
+         <p class="text-lg mb-2">Trình độ: <span id="finalLevel" class="font-bold text-pink-600">Beginner</span></p>
+         <p class="text-gray-600 mt-4" id="levelDescription">Bạn đang ở mức độ cơ bản. Hãy bắt đầu với các từ vựng dễ!</p>
+        </div><button onclick="showSection('learning')" class="btn-pink text-white px-8 py-3 rounded-xl font-semibold"> Bắt đầu học → </button>
+      </div>
+     </div>
+    </section><!-- Learning Section -->
+    <section id="learning" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold gradient-text mb-6 text-center">📖 Học từ mới</h2>
+      <div class="mb-6">
+       <div class="flex justify-between text-sm text-gray-600 mb-2"><span>Từ <span id="learningCurrent">1</span>/<span id="learningTotal">20</span></span> <span id="learnedCount">Đã học: 0</span>
+       </div>
+       <div class="progress-bar">
+        <div id="learningProgress" class="progress-fill" style="width: 5%"></div>
+       </div>
+      </div>
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+       <div class="flashcard-face flashcard-front bg-gradient-to-br from-pink-100 to-pink-50 shadow-xl">
+        <div class="text-center">
+         <p class="text-sm text-pink-600 font-semibold mb-4">Từ vựng</p>
+         <h3 id="wordFront" class="text-5xl font-bold text-gray-800 mb-4">Happy</h3>
+         <p class="text-lg text-gray-600">Nhấn để xem nghĩa</p>
+        </div>
+       </div>
+       <div class="flashcard-face flashcard-back bg-gradient-to-br from-rose-100 to-rose-50 shadow-xl">
+        <div class="text-center">
+         <p class="text-sm text-rose-600 font-semibold mb-4">Nghĩa</p>
+         <h3 id="wordBack" class="text-4xl font-bold text-gray-800 mb-4">Vui vẻ, hạnh phúc</h3>
+         <p class="text-lg text-gray-600 italic">Ví dụ: I'm so happy today!</p>
+        </div>
+       </div>
+      </div>
+      <div class="flex gap-4 mt-8"><button onclick="previousWord()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"> ← Trước </button> <button onclick="markAsLearned()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition-colors"> ✓ Đã nhớ </button> <button onclick="nextWord()" class="flex-1 btn-pink text-white py-3 rounded-xl font-semibold"> Tiếp → </button>
+      </div>
+     </div>
+    </section><!-- Games Section -->
+    <section id="games" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold gradient-text mb-6 text-center">🎮 Trò chơi học từ</h2>
+      <div class="grid md:grid-cols-3 gap-6 mb-8"><button onclick="startGame('matching')" class="card-3d bg-gradient-to-br from-pink-50 to-white p-6 rounded-xl border-2 border-pink-200">
+        <div class="text-4xl mb-3 text-center">
+         🎴
+        </div><h3 class="font-bold text-lg text-center mb-2">Matching Game</h3><p class="text-sm text-gray-600 text-center">Ghép từ với nghĩa</p></button> <button onclick="startGame('wordhunt')" class="card-3d bg-gradient-to-br from-rose-50 to-white p-6 rounded-xl border-2 border-rose-200">
+        <div class="text-4xl mb-3 text-center">
+         🔍
+        </div><h3 class="font-bold text-lg text-center mb-2">Word Hunt</h3><p class="text-sm text-gray-600 text-center">Tìm từ trong lưới</p></button> <button onclick="startGame('speedmatch')" class="card-3d bg-gradient-to-br from-pink-50 to-white p-6 rounded-xl border-2 border-pink-200">
+        <div class="text-4xl mb-3 text-center">
+         ⚡
+        </div><h3 class="font-bold text-lg text-center mb-2">Speed Match</h3><p class="text-sm text-gray-600 text-center">Ghép nhanh trong 30s</p></button>
+      </div><!-- Matching Game -->
+      <div id="matchingGame" class="hidden">
+       <div class="mb-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-pink-600">🎴 Matching Game</h3><span id="matchingScore" class="font-semibold">Đã ghép: 0/4</span>
+       </div>
+       <div id="matchingCards" class="grid grid-cols-4 gap-4"></div>
+       <div id="matchingComplete" class="hidden mt-6 text-center">
+        <div class="text-5xl mb-4">
+         🎉
+        </div>
+        <p class="text-xl font-bold text-pink-600">Chúc mừng! Bạn đã hoàn thành!</p>
+       </div>
+      </div><!-- Word Hunt Game -->
+      <div id="wordhuntGame" class="hidden">
+       <div class="mb-4">
+        <div class="flex justify-between items-center mb-4">
+         <h3 class="text-xl font-bold text-pink-600">🔍 Word Hunt</h3><span id="wordhuntScore" class="font-semibold">Tìm được: 0/3</span>
+        </div>
+        <div class="bg-pink-50 p-4 rounded-xl mb-4">
+         <p class="font-semibold mb-2">Từ cần tìm:</p>
+         <div id="wordhuntTargets" class="flex flex-wrap gap-2"></div>
+        </div>
+       </div>
+       <div id="wordhuntGrid" class="word-grid max-w-md mx-auto"></div>
+      </div><!-- Speed Match Game -->
+      <div id="speedmatchGame" class="hidden">
+       <div class="mb-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-pink-600">⚡ Speed Match</h3>
+        <div class="flex gap-4"><span id="speedmatchTimer" class="font-semibold">Thời gian: 30s</span> <span id="speedmatchScore" class="font-semibold">Điểm: 0</span>
+        </div>
+       </div>
+       <div id="speedmatchQuestion" class="bg-pink-50 p-6 rounded-xl mb-4">
+        <p class="text-lg font-semibold text-center" id="speedmatchWord">Loading...</p>
+       </div>
+       <div id="speedmatchOptions" class="grid grid-cols-2 gap-4"></div>
+      </div>
+     </div>
+    </section><!-- Test Section -->
+    <section id="test" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold gradient-text mb-6 text-center">✅ Bài kiểm tra</h2>
+      <div id="testQuiz">
+       <div class="mb-4">
+        <div class="flex justify-between text-sm text-gray-600 mb-2"><span>Câu <span id="testCurrent">1</span>/10</span> <span id="testScore">Điểm: 0</span>
+        </div>
+        <div class="progress-bar">
+         <div id="testProgress" class="progress-fill" style="width: 10%"></div>
+        </div>
+       </div>
+       <div id="testQuestions" class="space-y-6"></div><button id="testSubmit" onclick="submitTest()" class="btn-pink text-white px-8 py-3 rounded-xl font-semibold w-full mt-6"> Nộp bài </button>
+      </div>
+      <div id="testResult" class="hidden text-center">
+       <div class="text-6xl mb-4">
+        🏆
+       </div>
+       <h3 class="text-2xl font-bold gradient-text mb-4">Kết quả kiểm tra</h3>
+       <div class="bg-pink-50 p-6 rounded-xl mb-6">
+        <p class="text-lg mb-2">Điểm số: <span id="testFinalScore" class="font-bold text-pink-600">0</span>/10</p>
+        <p id="testFeedback" class="text-gray-600 mt-4">Tuyệt vời! Bạn đã làm rất tốt!</p>
+       </div><button onclick="resetTest()" class="btn-pink text-white px-8 py-3 rounded-xl font-semibold"> Làm lại </button>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script>
+    const defaultConfig = {
+      page_title: "Học từ vựng",
+      assessment_title: "Đánh giá trình độ",
+      learning_title: "Học từ mới",
+      games_title: "Trò chơi",
+      test_title: "Bài kiểm tra",
+      primary_color: "#ec4899",
+      secondary_color: "#f472b6",
+      accent_color: "#f43f5e",
+      text_color: "#1f2937",
+      background_color: "#fce7f3"
+    };
+
+    const API_BASE = "http://localhost:5000/api";
+    const API_TIMEOUT = 2000; // giảm timeout để fallback/local nhanh hơn
+
+    // Bộ từ vựng đa dạng hơn (30 từ, đủ cho nhiều chế độ)
+    const vocabularyData = [
+      { word: "Happy", meaning: "Vui vẻ, hạnh phúc", example: "I'm so happy today!" },
+      { word: "Beautiful", meaning: "Đẹp, xinh đẹp", example: "She is beautiful." },
+      { word: "Smart", meaning: "Thông minh", example: "He is a smart student." },
+      { word: "Kind", meaning: "Tử tế, tốt bụng", example: "She is very kind to everyone." },
+      { word: "Brave", meaning: "Dũng cảm", example: "The brave soldier saved the day." },
+      { word: "Creative", meaning: "Sáng tạo", example: "She has a creative mind." },
+      { word: "Honest", meaning: "Trung thực", example: "He is an honest person." },
+      { word: "Patient", meaning: "Kiên nhẫn", example: "Teachers need to be patient." },
+      { word: "Friendly", meaning: "Thân thiện", example: "Our neighbors are very friendly." },
+      { word: "Generous", meaning: "Hào phóng", example: "He is generous with his time." },
+      { word: "Confident", meaning: "Tự tin", example: "She speaks with confidence." },
+      { word: "Curious", meaning: "Tò mò, ham học hỏi", example: "Curious students ask many questions." },
+      { word: "Polite", meaning: "Lịch sự", example: "He is always polite to others." },
+      { word: "Grateful", meaning: "Biết ơn", example: "I'm grateful for your help." },
+      { word: "Reliable", meaning: "Đáng tin cậy", example: "She's a reliable colleague." },
+      { word: "Efficient", meaning: "Hiệu quả", example: "We need an efficient process." },
+      { word: "Cautious", meaning: "Cẩn trọng", example: "Be cautious when crossing the street." },
+      { word: "Cheerful", meaning: "Vui tươi", example: "He is cheerful every morning." },
+      { word: "Ambitious", meaning: "Tham vọng", example: "She is ambitious about her career." },
+      { word: "Diligent", meaning: "Siêng năng", example: "Diligent students finish homework early." },
+      { word: "Sincere", meaning: "Chân thành", example: "Her apology was sincere." },
+      { word: "Calm", meaning: "Điềm tĩnh", example: "Stay calm in emergencies." },
+      { word: "Energetic", meaning: "Nhiệt huyết, tràn đầy năng lượng", example: "The kids are energetic today." },
+      { word: "Logical", meaning: "Hợp lý, logic", example: "He gave a logical explanation." },
+      { word: "Modest", meaning: "Khiêm tốn", example: "She is modest about her success." },
+      { word: "Optimistic", meaning: "Lạc quan", example: "He remains optimistic about the future." },
+      { word: "Responsible", meaning: "Có trách nhiệm", example: "A responsible leader listens to the team." },
+      { word: "Thoughtful", meaning: "Chu đáo", example: "She is thoughtful with her gifts." },
+      { word: "Adaptable", meaning: "Thích nghi tốt", example: "Adaptable employees handle change well." },
+      { word: "Persistent", meaning: "Kiên trì", example: "Be persistent when learning new skills." }
+    ];
+
+    let currentWordIndex = 0;
+    let learnedWords = new Set();
+    let testScore = 0;
+    let speedMatchScore = 0;
+    let speedMatchTimer = null;
+    let placementSession = { assessmentId: null, total: 30, loading: false, mode: "backend" };
+    let localPlacement = { bank: [], index: 0, score: 0 };
+    let testQuestions = [];
+
+    const getAuthHeaders = () => {
+      const token = localStorage.getItem("token");
+      if (!token) return null; // thiếu token => fallback local
+      return {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      };
+    };
+
+    const fetchWithTimeout = async (url, options = {}, timeout = API_TIMEOUT) => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const res = await fetch(url, { ...options, signal: controller.signal });
+        return res;
+      } finally {
+        clearTimeout(id);
+      }
+    };
+
+    const scoreToLevel = (score) => {
+      if (score >= 85) return "C1";
+      if (score >= 70) return "B2";
+      if (score >= 55) return "B1";
+      if (score >= 40) return "A2";
+      return "A1";
+    };
+
+    const shuffleArray = (arr) => [...arr].sort(() => Math.random() - 0.5);
+    const pickRandom = (arr, n) => shuffleArray(arr).slice(0, n);
+
+    // Section navigation
+    function showSection(sectionId) {
+      const sections = ['menu', 'assessment', 'learning', 'games', 'test'];
+      sections.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(sectionId).classList.remove('hidden');
+      document.getElementById(sectionId).classList.add('fade-in');
+
+      if (sectionId === 'assessment' && !placementSession.assessmentId && !placementSession.loading) {
+        startPlacement();
+      }
+      if (sectionId === 'test') {
+        loadTest();
+      }
+    }
+
+    // Flashcard functions
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function updateFlashcard() {
+      const word = vocabularyData[currentWordIndex];
+      document.getElementById('wordFront').textContent = word.word;
+      document.getElementById('wordBack').innerHTML = `${word.meaning}<br><span class="text-lg text-gray-600 italic mt-2 block">Ví dụ: ${word.example}</span>`;
+      document.getElementById('learningCurrent').textContent = currentWordIndex + 1;
+      document.getElementById('learningTotal').textContent = vocabularyData.length;
+      document.getElementById('learningProgress').style.width = `${((currentWordIndex + 1) / vocabularyData.length) * 100}%`;
+      document.getElementById('learnedCount').textContent = `Đã học: ${learnedWords.size}`;
+      
+      // Reset flip
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function nextWord() {
+      if (currentWordIndex < vocabularyData.length - 1) {
+        currentWordIndex++;
+        updateFlashcard();
+      }
+    }
+
+    function previousWord() {
+      if (currentWordIndex > 0) {
+        currentWordIndex--;
+        updateFlashcard();
+      }
+    }
+
+    function markAsLearned() {
+      learnedWords.add(currentWordIndex);
+      document.getElementById('learnedCount').textContent = `Đã học: ${learnedWords.size}`;
+      if (currentWordIndex < vocabularyData.length - 1) {
+        nextWord();
+      }
+    }
+
+    const buildLocalPlacementBank = (n = 30) => {
+      const bank = [];
+      const vocabPool = shuffleArray(vocabularyData);
+      for (let i = 0; i < n; i++) {
+        const word = vocabPool[i % vocabPool.length];
+        const wrongs = pickRandom(
+          vocabularyData.filter(v => v.meaning !== word.meaning),
+          3
+        ).map(v => v.meaning);
+        const options = shuffleArray([word.meaning, ...wrongs]);
+        bank.push({
+          question: `Nghĩa của từ "${word.word}" là gì?`,
+          options,
+          correctAnswer: word.meaning,
+          total: n,
+          progress: i + 1,
+        });
+      }
+      return bank;
+    };
+
+    function useLocalPlacement() {
+      placementSession.mode = "local";
+      placementSession.assessmentId = null;
+      placementSession.total = 30;
+      localPlacement.bank = buildLocalPlacementBank(placementSession.total);
+      localPlacement.index = 0;
+      localPlacement.score = 0;
+      renderLocalPlacementQuestion();
+    }
+
+    // Assessment (Placement) - dùng backend + thuật toán thích ứng; fallback local nếu fail
+    async function startPlacement() {
+      try {
+        placementSession.loading = true;
+        document.getElementById('assessmentQuestion').innerHTML = `<p class="text-center text-gray-600">Đang khởi tạo bài test...</p>`;
+        document.getElementById('assessmentScore').textContent = "Tiến độ: 0/30";
+        const headers = getAuthHeaders();
+        if (!headers) {
+          useLocalPlacement();
+          return;
+        }
+
+        const res = await fetchWithTimeout(`${API_BASE}/placement/start`, {
+          method: "POST",
+          headers,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Không khởi tạo được bài test");
+        placementSession.assessmentId = data.assessmentId;
+        placementSession.mode = "backend";
+        placementSession.loading = false; // allow next loader to run
+        await loadPlacementQuestion();
+      } catch (err) {
+        console.warn("Placement start fallback:", err);
+        useLocalPlacement();
+      } finally {
+        placementSession.loading = false;
+      }
+    }
+
+    async function loadPlacementQuestion(answer) {
+      if (placementSession.mode === "local") {
+        handleLocalPlacementAnswer(answer);
+        return;
+      }
+      if (!placementSession.assessmentId) return;
+      placementSession.loading = true;
+      try {
+        const headers = getAuthHeaders();
+        if (!headers) {
+          useLocalPlacement();
+          return;
+        }
+
+        const res = await fetchWithTimeout(`${API_BASE}/placement/next`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            assessmentId: placementSession.assessmentId,
+            ...(answer ? { answer } : {}),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Không tải được câu hỏi");
+
+        if (data.done) {
+          showPlacementResult(data);
+          return;
+        }
+
+        renderPlacementQuestion(data);
+      } catch (err) {
+        console.warn("Placement next fallback:", err);
+        useLocalPlacement();
+      } finally {
+        placementSession.loading = false;
+      }
+    }
+
+    function renderPlacementQuestion(q) {
+      placementSession.total = q.total || placementSession.total;
+      document.getElementById('assessmentQuiz').classList.remove('hidden');
+      document.getElementById('assessmentResult').classList.add('hidden');
+      document.getElementById('assessmentCurrent').textContent = q.progress;
+      document.getElementById('assessmentScore').textContent = `Tiến độ: ${q.progress - 1}/${placementSession.total}`;
+      document.getElementById('assessmentProgress').style.width = `${(q.progress / placementSession.total) * 100}%`;
+
+      const questionDiv = document.getElementById('assessmentQuestion');
+      let html = `<p class="text-lg font-semibold mb-4">${q.question}</p><div class="space-y-3">`;
+      q.options.forEach((opt, i) => {
+        html += `<button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors" data-opt="${opt}">${String.fromCharCode(65 + i)}. ${opt}</button>`;
+      });
+      html += '</div>';
+      questionDiv.innerHTML = html;
+
+      questionDiv.querySelectorAll('button').forEach(btn => {
+        btn.onclick = () => {
+          if (placementSession.loading) return;
+          btn.classList.add('bg-pink-50');
+          // Hiển thị trạng thái đang tải câu tiếp theo để giảm cảm giác trễ
+          questionDiv.innerHTML = `<div class="text-center text-gray-600 py-6">Đang tải câu tiếp theo...</div>`;
+          loadPlacementQuestion(btn.dataset.opt);
+        };
+      });
+    }
+
+    function showPlacementResult(result) {
+      document.getElementById('assessmentQuiz').classList.add('hidden');
+      document.getElementById('assessmentResult').classList.remove('hidden');
+      const score = Math.max(0, Math.round(result.finalScore ?? 0));
+      const level = result.finalLevel || scoreToLevel(score);
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalLevel').textContent = level;
+      document.getElementById('levelDescription').textContent = `Trình độ của bạn: ${level}. Tiếp tục ôn luyện để nâng cao điểm số!`;
+    }
+
+    // ---------- Local placement fallback handlers ----------
+    function renderLocalPlacementQuestion() {
+      const idx = localPlacement.index;
+      const q = localPlacement.bank[idx];
+      if (!q) {
+        const finalScore = Math.round((localPlacement.score / localPlacement.bank.length) * 100);
+        showPlacementResult({ finalScore, finalLevel: "Local" });
+        return;
+      }
+      document.getElementById('assessmentQuiz').classList.remove('hidden');
+      document.getElementById('assessmentResult').classList.add('hidden');
+      document.getElementById('assessmentCurrent').textContent = idx + 1;
+      document.getElementById('assessmentScore').textContent = `Tiến độ: ${idx}/${placementSession.total}`;
+      document.getElementById('assessmentProgress').style.width = `${((idx + 1) / placementSession.total) * 100}%`;
+
+      const questionDiv = document.getElementById('assessmentQuestion');
+      let html = `<p class="text-lg font-semibold mb-4">${q.question}</p><div class="space-y-3">`;
+      q.options.forEach((opt, i) => {
+        html += `<button class="assessment-option w-full text-left p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors" data-opt="${opt}">${String.fromCharCode(65 + i)}. ${opt}</button>`;
+      });
+      html += '</div>';
+      questionDiv.innerHTML = html;
+
+      questionDiv.querySelectorAll('button').forEach(btn => {
+        btn.onclick = () => {
+          btn.classList.add('bg-pink-50');
+          handleLocalPlacementAnswer(btn.dataset.opt);
+        };
+      });
+    }
+
+    function handleLocalPlacementAnswer(answer) {
+      if (placementSession.mode !== "local") return;
+      if (answer) {
+        const q = localPlacement.bank[localPlacement.index];
+        if (q && answer === q.correctAnswer) {
+          localPlacement.score += 1;
+        }
+      }
+      if (localPlacement.index < placementSession.total - 1) {
+        localPlacement.index += 1;
+        renderLocalPlacementQuestion();
+      } else {
+        const finalScore = Math.round((localPlacement.score / localPlacement.bank.length) * 100);
+        const finalLevel = scoreToLevel(finalScore);
+        showPlacementResult({ finalScore, finalLevel });
+      }
+    }
+
+    // Matching Game
+    function startGame(gameType) {
+      document.getElementById('matchingGame').classList.add('hidden');
+      document.getElementById('wordhuntGame').classList.add('hidden');
+      document.getElementById('speedmatchGame').classList.add('hidden');
+      
+      if (gameType === 'matching') {
+        setupMatchingGame();
+      } else if (gameType === 'wordhunt') {
+        setupWordHuntGame();
+      } else if (gameType === 'speedmatch') {
+        setupSpeedMatchGame();
+      }
+    }
+
+    function setupMatchingGame() {
+      document.getElementById('matchingGame').classList.remove('hidden');
+      const words = pickRandom(vocabularyData, 6);
+      let cards = [];
+      
+      words.forEach((w, i) => {
+        cards.push({ id: i, text: w.word, type: 'word' });
+        cards.push({ id: i, text: w.meaning, type: 'meaning' });
+      });
+      
+      cards = cards.sort(() => Math.random() - 0.5);
+      
+      const container = document.getElementById('matchingCards');
+      container.innerHTML = '';
+      
+      let selectedCard = null;
+      let matchedPairs = 0;
+      document.getElementById('matchingScore').textContent = `Đã ghép: 0/${words.length}`;
+      
+      cards.forEach((card, index) => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'game-card bg-white p-6 rounded-xl border-2 border-pink-200 text-center font-semibold cursor-pointer hover:border-pink-400 transition-all';
+        cardDiv.textContent = card.text;
+        cardDiv.dataset.id = card.id;
+        cardDiv.dataset.type = card.type;
+        
+        cardDiv.onclick = function() {
+          if (this.classList.contains('matched')) return;
+          
+          if (!selectedCard) {
+            selectedCard = this;
+            this.style.background = '#fce7f3';
+          } else {
+            if (selectedCard.dataset.id === this.dataset.id && selectedCard.dataset.type !== this.dataset.type) {
+              // Match!
+              this.classList.add('matched');
+              selectedCard.classList.add('matched');
+              this.style.background = '#86efac';
+              selectedCard.style.background = '#86efac';
+              matchedPairs++;
+              document.getElementById('matchingScore').textContent = `Đã ghép: ${matchedPairs}/${words.length}`;
+              
+              if (matchedPairs === words.length) {
+                setTimeout(() => {
+                  document.getElementById('matchingComplete').classList.remove('hidden');
+                }, 500);
+              }
+            } else {
+              // No match
+              selectedCard.style.background = 'white';
+            }
+            selectedCard = null;
+          }
+        };
+        
+        container.appendChild(cardDiv);
+      });
+    }
+
+    // Word Hunt Game
+    function setupWordHuntGame() {
+      document.getElementById('wordhuntGame').classList.remove('hidden');
+      
+      const candidates = vocabularyData.filter(w => w.word.length <= 6);
+      const targetWords = (candidates.length ? pickRandom(candidates, 3) : [{ word: "Happy" }, { word: "Kind" }, { word: "Smart" }]).map(w => w.word.toUpperCase());
+      const grid = Array(6).fill().map(() => Array(6).fill(''));
+      document.getElementById('wordhuntScore').textContent = `Tìm được: 0/${targetWords.length}`;
+      
+      // Place words
+      targetWords.forEach(word => {
+        let placed = false;
+        while (!placed) {
+          const row = Math.floor(Math.random() * 6);
+          const col = Math.floor(Math.random() * (7 - word.length));
+          let canPlace = true;
+          
+          for (let i = 0; i < word.length; i++) {
+            if (grid[row][col + i] !== '') {
+              canPlace = false;
+              break;
+            }
+          }
+          
+          if (canPlace) {
+            for (let i = 0; i < word.length; i++) {
+              grid[row][col + i] = word[i];
+            }
+            placed = true;
+          }
+        }
+      });
+      
+      // Fill empty spaces
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 6; j++) {
+          if (grid[i][j] === '') {
+            grid[i][j] = letters[Math.floor(Math.random() * letters.length)];
+          }
+        }
+      }
+      
+      // Render grid
+      const container = document.getElementById('wordhuntGrid');
+      container.innerHTML = '';
+      let selectedCells = [];
+      let foundWords = new Set();
+      
+      grid.forEach((row, i) => {
+        row.forEach((letter, j) => {
+          const cell = document.createElement('div');
+          cell.className = 'word-cell';
+          cell.textContent = letter;
+          cell.dataset.row = i;
+          cell.dataset.col = j;
+          
+          cell.onclick = function() {
+            if (this.classList.contains('found')) return;
+            
+            this.classList.toggle('selected');
+            const index = selectedCells.findIndex(c => c.row == i && c.col == j);
+            
+            if (index > -1) {
+              selectedCells.splice(index, 1);
+            } else {
+              selectedCells.push({ row: i, col: j, letter });
+            }
+            
+            const word = selectedCells.map(c => c.letter).join('');
+            
+            if (targetWords.includes(word) && !foundWords.has(word)) {
+              foundWords.add(word);
+              selectedCells.forEach(c => {
+                const foundCell = container.querySelector(`[data-row="${c.row}"][data-col="${c.col}"]`);
+                foundCell.classList.remove('selected');
+                foundCell.classList.add('found');
+              });
+              selectedCells = [];
+              document.getElementById('wordhuntScore').textContent = `Tìm được: ${foundWords.size}/3`;
+            }
+          };
+          
+          container.appendChild(cell);
+        });
+      });
+      
+      // Show targets
+      const targetsDiv = document.getElementById('wordhuntTargets');
+      targetsDiv.innerHTML = targetWords.map(w => `<span class="px-3 py-1 bg-white rounded-lg border-2 border-pink-300 font-semibold">${w}</span>`).join('');
+    }
+
+    // Speed Match Game
+    function setupSpeedMatchGame() {
+      document.getElementById('speedmatchGame').classList.remove('hidden');
+      speedMatchScore = 0;
+      let timeLeft = 30;
+      
+      document.getElementById('speedmatchScore').textContent = `Điểm: ${speedMatchScore}`;
+      document.getElementById('speedmatchTimer').textContent = `Thời gian: ${timeLeft}s`;
+      
+      function nextQuestion() {
+        const word = vocabularyData[Math.floor(Math.random() * vocabularyData.length)];
+        const correctMeaning = word.meaning;
+        const wrongMeanings = vocabularyData
+          .filter(w => w.meaning !== correctMeaning)
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 3)
+          .map(w => w.meaning);
+        
+        const options = [correctMeaning, ...wrongMeanings].sort(() => Math.random() - 0.5);
+        
+        document.getElementById('speedmatchWord').textContent = word.word;
+        
+        const container = document.getElementById('speedmatchOptions');
+        container.innerHTML = '';
+        
+        options.forEach(opt => {
+          const btn = document.createElement('button');
+          btn.className = 'p-6 bg-white rounded-xl border-2 border-pink-200 hover:border-pink-400 transition-all font-semibold';
+          btn.textContent = opt;
+          btn.onclick = function() {
+            if (opt === correctMeaning) {
+              speedMatchScore++;
+              document.getElementById('speedmatchScore').textContent = `Điểm: ${speedMatchScore}`;
+              this.style.background = '#86efac';
+              setTimeout(nextQuestion, 300);
+            } else {
+              this.style.background = '#fecaca';
+              setTimeout(() => this.style.background = 'white', 300);
+            }
+          };
+          container.appendChild(btn);
+        });
+      }
+      
+      nextQuestion();
+      
+      speedMatchTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('speedmatchTimer').textContent = `Thời gian: ${timeLeft}s`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(speedMatchTimer);
+          document.getElementById('speedmatchGame').innerHTML = `
+            <div class="text-center py-12">
+              <div class="text-6xl mb-4">⏰</div>
+              <h3 class="text-2xl font-bold gradient-text mb-4">Hết giờ!</h3>
+              <p class="text-xl mb-6">Điểm của bạn: <span class="font-bold text-pink-600">${speedMatchScore}</span></p>
+              <button onclick="startGame('speedmatch')" class="btn-pink text-white px-8 py-3 rounded-xl font-semibold">Chơi lại</button>
+            </div>
+          `;
+        }
+      }, 1000);
+    }
+
+    // Test functions (tạo ngẫu nhiên từ bộ từ vựng)
+    let currentTestIndex = 0;
+
+    function buildTestQuestions() {
+      const selected = pickRandom(vocabularyData, 10);
+      return selected.map((w, idx) => {
+        if (idx % 2 === 0) {
+          // multiple choice nghĩa
+          const wrongOptions = pickRandom(
+            vocabularyData.filter(v => v.meaning !== w.meaning),
+            3
+          ).map(v => v.meaning);
+          const options = shuffleArray([w.meaning, ...wrongOptions]);
+          const correct = options.indexOf(w.meaning);
+          return {
+            type: 'mc',
+            question: `Chọn đúng nghĩa của "${w.word}":`,
+            options,
+            correct
+          };
+        } else {
+          return {
+            type: 'fill',
+            question: `Điền từ phù hợp: ${w.example.replace(w.word, "_____")}`,
+            answer: w.word.toLowerCase()
+          };
+        }
+      });
+    }
+
+    function loadTest() {
+      testQuestions = buildTestQuestions();
+      const container = document.getElementById('testQuestions');
+      container.innerHTML = '';
+      document.getElementById('testResult').classList.add('hidden');
+      document.getElementById('testQuiz').classList.remove('hidden');
+      
+      testQuestions.forEach((q, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'bg-pink-50 p-6 rounded-xl';
+        
+        if (q.type === 'mc') {
+          let html = `<p class="font-semibold mb-4">${index + 1}. ${q.question}</p><div class="space-y-2">`;
+          q.options.forEach((opt, i) => {
+            html += `<label class="flex items-center p-3 bg-white rounded-lg cursor-pointer hover:bg-pink-100 transition-colors">
+              <input type="radio" name="q${index}" value="${i}" class="mr-3">
+              <span>${opt}</span>
+            </label>`;
+          });
+          html += '</div>';
+          qDiv.innerHTML = html;
+        } else if (q.type === 'fill') {
+          qDiv.innerHTML = `
+            <p class="font-semibold mb-4">${index + 1}. ${q.question}</p>
+            <input type="text" id="fill${index}" class="w-full p-3 border-2 border-pink-200 rounded-lg focus:outline-none focus:border-pink-400" placeholder="Nhập câu trả lời">
+          `;
+        }
+        
+        container.appendChild(qDiv);
+      });
+    }
+
+    function submitTest() {
+      let score = 0;
+      
+      testQuestions.forEach((q, index) => {
+        if (q.type === 'mc') {
+          const selected = document.querySelector(`input[name="q${index}"]:checked`);
+          if (selected && parseInt(selected.value) === q.correct) {
+            score++;
+          }
+        } else if (q.type === 'fill') {
+          const answer = document.getElementById(`fill${index}`).value.toLowerCase().trim();
+          if (answer === q.answer.toLowerCase()) {
+            score++;
+          }
+        }
+      });
+      
+      document.getElementById('testQuiz').classList.add('hidden');
+      document.getElementById('testResult').classList.remove('hidden');
+      document.getElementById('testFinalScore').textContent = score;
+      
+      let feedback;
+      if (score >= 8) {
+        feedback = "🎉 Xuất sắc! Bạn đã nắm vững từ vựng!";
+      } else if (score >= 5) {
+        feedback = "👍 Tốt lắm! Bạn đang tiến bộ!";
+      } else {
+        feedback = "💪 Cố gắng thêm nhé! Hãy ôn lại từ vựng!";
+      }
+      
+      document.getElementById('testFeedback').textContent = feedback;
+    }
+
+    function resetTest() {
+      document.getElementById('testResult').classList.add('hidden');
+      document.getElementById('testQuiz').classList.remove('hidden');
+      loadTest();
+    }
+
+    // Initialize
+    window.onload = function() {
+      updateFlashcard();
+      loadTest();
+    };
+
+    // Element SDK
+    async function onConfigChange(config) {
+      document.getElementById('pageTitle').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('assessmentTitle').textContent = config.assessment_title || defaultConfig.assessment_title;
+      document.getElementById('learningTitle').textContent = config.learning_title || defaultConfig.learning_title;
+      document.getElementById('gamesTitle').textContent = config.games_title || defaultConfig.games_title;
+      document.getElementById('testTitle').textContent = config.test_title || defaultConfig.test_title;
+      
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      
+      document.querySelectorAll('.gradient-text').forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)`;
+        el.style.webkitBackgroundClip = 'text';
+        el.style.webkitTextFillColor = 'transparent';
+        el.style.backgroundClip = 'text';
+      });
+      
+      document.querySelectorAll('.btn-pink').forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["assessment_title", config.assessment_title || defaultConfig.assessment_title],
+        ["learning_title", config.learning_title || defaultConfig.learning_title],
+        ["games_title", config.games_title || defaultConfig.games_title],
+        ["test_title", config.test_title || defaultConfig.test_title]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b203a0b713620e3',t:'MTc2NjQxMjg3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

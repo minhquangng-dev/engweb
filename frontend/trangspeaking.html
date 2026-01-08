@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="vi" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speaking Practice - English Blossom</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes wave {
+      0%, 100% { height: 20%; }
+      50% { height: 80%; }
+    }
+    
+    @keyframes countdown {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #fce7f3 0%, #ffffff 50%, #fff1f2 100%);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .btn-pink {
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+    }
+    
+    .btn-pink:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(236, 72, 153, 0.4);
+    }
+    
+    .card-3d {
+      perspective: 1000px;
+      transition: transform 0.3s ease;
+    }
+    
+    .card-3d:hover {
+      transform: translateY(-5px);
+    }
+    
+    .recording-pulse {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .countdown-animation {
+      animation: countdown 1s ease-in-out;
+    }
+    
+    .wave-bar {
+      width: 4px;
+      background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+      border-radius: 2px;
+      animation: wave 0.8s ease-in-out infinite;
+    }
+    
+    .timer-circle {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 8px solid #fbcfe8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: white;
+    }
+    
+    .timer-progress {
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      width: 216px;
+      height: 216px;
+      border-radius: 50%;
+      border: 8px solid transparent;
+      border-top-color: #ec4899;
+      transition: transform 0.1s linear;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .mic-icon {
+      font-size: 4rem;
+      transition: all 0.3s ease;
+    }
+    
+    .recording .mic-icon {
+      color: #ef4444;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    
+    .score-badge {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    
+    .score-excellent {
+      background: linear-gradient(135deg, #86efac 0%, #10b981 100%);
+      color: #166534;
+    }
+    
+    .score-good {
+      background: linear-gradient(135deg, #fde047 0%, #facc15 100%);
+      color: #713f12;
+    }
+    
+    .score-fair {
+      background: linear-gradient(135deg, #fca5a1 0%, #f87171 100%);
+      color: #991b1b;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full">
+  <div id="app" class="w-full h-full overflow-auto gradient-bg"><!-- Header -->
+   <header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+     <div class="flex items-center"><span class="text-4xl mr-3">🎤</span>
+      <div>
+       <h1 id="pageTitle" class="text-2xl font-bold gradient-text">Luyện Speaking</h1>
+       <p class="text-sm text-gray-600">Nâng cao kỹ năng nói tiếng Anh</p>
+      </div>
+     </div><button onclick="showSection('menu')" class="btn-pink text-white px-6 py-2 rounded-xl font-semibold"> 🏠 Menu </button>
+    </div>
+   </header>
+   <main class="max-w-7xl mx-auto px-6 py-8"><!-- Main Menu -->
+    <section id="menu" class="fade-in">
+     <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div class="card-3d bg-white rounded-2xl p-8 shadow-lg cursor-pointer" onclick="showSection('mode1')">
+       <div class="text-6xl mb-4 text-center">
+        🎯
+       </div>
+       <h3 id="mode1Title" class="text-2xl font-bold text-center mb-3 gradient-text">IELTS Speaking Practice</h3>
+       <p id="mode1Desc" class="text-gray-600 text-center mb-4">Luyện tập với câu hỏi IELTS Speaking Part 1, 2, 3. Nhận feedback chi tiết về phát âm, từ vựng và ngữ pháp.</p>
+       <div class="flex justify-center gap-2 flex-wrap"><span class="px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold">Part 1-3</span> <span class="px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold">AI Feedback</span> <span class="px-3 py-1 bg-pink-100 text-pink-600 rounded-full text-sm font-semibold">Band Score</span>
+       </div>
+      </div>
+      <div class="card-3d bg-white rounded-2xl p-8 shadow-lg cursor-pointer" onclick="showSection('mode2')">
+       <div class="text-6xl mb-4 text-center">
+        👑
+       </div>
+       <h3 id="mode2Title" class="text-2xl font-bold text-center mb-3 gradient-text">Interview Practice</h3>
+       <p id="mode2Desc" class="text-gray-600 text-center mb-4">Ứng xử với các tình huống, chủ đề xã hội và quan điểm cá nhân. 60 giây chuẩn bị và trình bày ý kiến của bạn!</p>
+       <div class="flex justify-center gap-2 flex-wrap"><span class="px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-sm font-semibold">60s Timer</span> <span class="px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-sm font-semibold">Real Topics</span> <span class="px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-sm font-semibold">AI Review</span>
+       </div>
+      </div>
+     </div>
+    </section><!-- Mode 1: IELTS Speaking -->
+    <section id="mode1" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-3xl font-bold gradient-text">🎯 IELTS Speaking Practice</h2><button onclick="getNewQuestion('ielts')" class="bg-pink-100 text-pink-600 px-4 py-2 rounded-xl font-semibold hover:bg-pink-200 transition-colors"> 🔄 Câu mới </button>
+      </div><!-- Question Display -->
+      <div id="ieltsQuestion" class="mb-6">
+       <div class="bg-gradient-to-br from-pink-50 to-white p-6 rounded-xl border-2 border-pink-200 mb-4">
+        <div class="flex items-start gap-3 mb-4"><span class="px-3 py-1 bg-pink-500 text-white rounded-lg font-semibold text-sm">Part 1</span>
+         <div class="flex-1">
+          <p class="text-xl font-semibold text-gray-800 mb-2" id="ieltsQuestionText">Do you enjoy spending time with your family? Why or why not?</p>
+          <p class="text-sm text-gray-600 italic">💡 Hãy trả lời trong 1-2 phút</p>
+         </div>
+        </div><!-- Vocabulary Hints -->
+        <div class="bg-white p-4 rounded-lg border border-pink-100">
+         <p class="text-sm font-semibold text-pink-600 mb-2">📚 Từ vựng gợi ý:</p>
+         <div class="flex flex-wrap gap-2" id="vocabHints"><span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-sm">quality time</span> <span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-sm">bond</span> <span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-sm">cherish</span> <span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-sm">relationship</span>
+         </div>
+        </div>
+       </div><!-- Recording Controls -->
+       <div class="text-center">
+        <div id="ieltsRecordingStatus" class="mb-6">
+         <div class="mic-icon">
+          🎤
+         </div>
+         <p class="text-gray-600 mt-2">Nhấn Record để bắt đầu</p>
+         <p id="ieltsRecordTime" class="text-2xl font-bold text-pink-600 mt-2 hidden">00:00</p>
+        </div><!-- Waveform Animation -->
+        <div id="ieltsWaveform" class="hidden flex justify-center items-center gap-1 h-20 mb-6">
+         <div class="wave-bar" style="animation-delay: 0s"></div>
+         <div class="wave-bar" style="animation-delay: 0.1s"></div>
+         <div class="wave-bar" style="animation-delay: 0.2s"></div>
+         <div class="wave-bar" style="animation-delay: 0.3s"></div>
+         <div class="wave-bar" style="animation-delay: 0.4s"></div>
+         <div class="wave-bar" style="animation-delay: 0.3s"></div>
+         <div class="wave-bar" style="animation-delay: 0.2s"></div>
+         <div class="wave-bar" style="animation-delay: 0.1s"></div>
+        </div>
+        <div class="flex gap-4 justify-center"><button id="ieltsRecordBtn" onclick="toggleRecording('ielts')" class="btn-pink text-white px-8 py-4 rounded-xl font-semibold text-lg"> 🎙️ Record </button> <button id="ieltsStopBtn" onclick="stopRecording('ielts')" class="hidden bg-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-red-600 transition-colors"> ⏹️ Stop </button>
+        </div>
+       </div>
+      </div><!-- AI Feedback -->
+      <div id="ieltsFeedback" class="hidden">
+       <div class="bg-gradient-to-br from-green-50 to-white p-6 rounded-xl border-2 border-green-200 mb-6">
+        <h3 class="text-2xl font-bold text-center mb-4 gradient-text">✨ AI Feedback</h3>
+        <div class="text-center mb-6">
+         <p class="text-sm text-gray-600 mb-2">IELTS Band Score</p>
+         <div id="ieltsBandScore" class="score-badge score-excellent">
+          0.0
+         </div>
+         <p id="ieltsTranscriptPreview" class="text-xs text-gray-500 mt-2"></p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 mb-6">
+         <div class="bg-white p-4 rounded-lg border border-green-100">
+          <div class="flex items-center justify-between mb-2"><span class="font-semibold text-gray-700">🗣️ Pronunciation</span> <span id="ieltsPron" class="text-pink-600 font-bold">0.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+           <div id="ieltsPronBar" class="bg-gradient-to-r from-pink-500 to-pink-400 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+         </div>
+         <div class="bg-white p-4 rounded-lg border border-green-100">
+          <div class="flex items-center justify-between mb-2"><span class="font-semibold text-gray-700">💬 Fluency</span> <span id="ieltsFluency" class="text-pink-600 font-bold">0.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+           <div id="ieltsFluencyBar" class="bg-gradient-to-r from-pink-500 to-pink-400 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+         </div>
+         <div class="bg-white p-4 rounded-lg border border-green-100">
+          <div class="flex items-center justify-between mb-2"><span class="font-semibold text-gray-700">📚 Vocabulary</span> <span id="ieltsVocabScore" class="text-pink-600 font-bold">0.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+           <div id="ieltsVocabBar" class="bg-gradient-to-r from-pink-500 to-pink-400 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+         </div>
+         <div class="bg-white p-4 rounded-lg border border-green-100">
+          <div class="flex items-center justify-between mb-2"><span class="font-semibold text-gray-700">✏️ Grammar</span> <span id="ieltsGrammar" class="text-pink-600 font-bold">0.0</span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+           <div id="ieltsGrammarBar" class="bg-gradient-to-r from-pink-500 to-pink-400 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+         </div>
+        </div><!-- Detailed Feedback -->
+        <div class="space-y-4">
+         <div class="bg-white p-4 rounded-lg border-l-4 border-green-500">
+          <p class="font-semibold text-green-700 mb-2">✅ Điểm mạnh:</p>
+          <ul id="ieltsStrengths" class="text-gray-700 space-y-1 text-sm"></ul>
+         </div>
+         <div class="bg-white p-4 rounded-lg border-l-4 border-yellow-500">
+          <p class="font-semibold text-yellow-700 mb-2">💡 Gợi ý cải thiện:</p>
+          <ul id="ieltsImprovements" class="text-gray-700 space-y-1 text-sm"></ul>
+         </div>
+         <div class="bg-white p-4 rounded-lg border-l-4 border-pink-500">
+          <p class="font-semibold text-pink-700 mb-2">📖 Từ vựng nổi bật bạn đã dùng:</p>
+          <div id="ieltsVocabUsed" class="flex flex-wrap gap-2 mt-2"></div>
+         </div>
+        </div>
+        <div class="flex gap-4 mt-6"><button onclick="getNewQuestion('ielts')" class="flex-1 btn-pink text-white py-3 rounded-xl font-semibold"> Câu tiếp theo → </button> <button onclick="hideFeedback('ielts')" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"> Thử lại </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Mode 2: Interview Practice -->
+    <section id="mode2" class="hidden">
+     <div class="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-3xl font-bold gradient-text">👑 Interview Practice</h2><button onclick="getNewQuestion('interview')" class="bg-rose-100 text-rose-600 px-4 py-2 rounded-xl font-semibold hover:bg-rose-200 transition-colors"> 🔄 Chủ đề mới </button>
+      </div><!-- Question/Topic Display -->
+      <div id="interviewQuestion" class="mb-6">
+       <div class="bg-gradient-to-br from-rose-50 to-white p-6 rounded-xl border-2 border-rose-200 mb-6">
+        <div class="flex items-start gap-3 mb-4"><span class="px-3 py-1 bg-rose-500 text-white rounded-lg font-semibold text-sm">Chủ đề</span>
+         <div class="flex-1">
+          <h3 class="text-2xl font-bold text-gray-800 mb-3" id="interviewTopicText">Social Media &amp; Mental Health</h3>
+          <p class="text-lg text-gray-700" id="interviewQuestionText">"Theo bạn, mạng xã hội ảnh hưởng như thế nào đến sức khỏe tinh thần của giới trẻ? Bạn có giải pháp gì để sử dụng mạng xã hội một cách lành mạnh?"</p>
+         </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg border border-rose-100">
+         <p class="text-sm font-semibold text-rose-600 mb-2">💭 Gợi ý triển khai:</p>
+         <ul class="text-gray-600 text-sm space-y-1">
+          <li>• Phân tích cả mặt tích cực và tiêu cực</li>
+          <li>• Đưa ra ví dụ thực tế hoặc nghiên cứu</li>
+          <li>• Nêu quan điểm cá nhân rõ ràng</li>
+          <li>• Đề xuất giải pháp khả thi</li>
+         </ul>
+        </div>
+       </div><!-- Timer and Recording -->
+       <div class="text-center"><!-- Countdown Timer -->
+        <div id="interviewTimer" class="mb-6">
+         <div class="timer-circle mx-auto countdown-animation">
+          <div class="timer-progress" id="timerProgress"></div>
+          <div class="text-center">
+           <p class="text-sm text-gray-600 mb-1">Thời gian chuẩn bị</p>
+           <p class="text-5xl font-bold text-pink-600" id="countdownText">60</p>
+           <p class="text-sm text-gray-600 mt-1">giây</p>
+          </div>
+         </div>
+         <p class="text-gray-600 mt-4">⏱️ Suy nghĩ và chuẩn bị ý tưởng của bạn</p>
+        </div><!-- Recording Status -->
+        <div id="interviewRecordingStatus" class="hidden mb-6">
+         <div class="mic-icon">
+          🎤
+         </div>
+         <p class="text-gray-600 mt-2">Đang ghi âm...</p>
+         <p id="interviewRecordTime" class="text-2xl font-bold text-pink-600 mt-2">00:00</p>
+        </div><!-- Waveform Animation -->
+        <div id="interviewWaveform" class="hidden flex justify-center items-center gap-1 h-20 mb-6">
+         <div class="wave-bar" style="animation-delay: 0s"></div>
+         <div class="wave-bar" style="animation-delay: 0.1s"></div>
+         <div class="wave-bar" style="animation-delay: 0.2s"></div>
+         <div class="wave-bar" style="animation-delay: 0.3s"></div>
+         <div class="wave-bar" style="animation-delay: 0.4s"></div>
+         <div class="wave-bar" style="animation-delay: 0.3s"></div>
+         <div class="wave-bar" style="animation-delay: 0.2s"></div>
+         <div class="wave-bar" style="animation-delay: 0.1s"></div>
+        </div>
+        <div class="flex gap-4 justify-center"><button id="interviewRecordBtn" onclick="toggleRecording('interview')" class="btn-pink text-white px-8 py-4 rounded-xl font-semibold text-lg" disabled> 🎙️ Ready to Record </button> <button id="interviewStopBtn" onclick="stopRecording('interview')" class="hidden bg-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-red-600 transition-colors"> ⏹️ Stop </button>
+        </div>
+       </div>
+      </div><!-- AI Feedback -->
+      <div id="interviewFeedback" class="hidden">
+       <div class="bg-gradient-to-br from-purple-50 to-white p-6 rounded-xl border-2 border-purple-200 mb-6">
+        <h3 class="text-2xl font-bold text-center mb-4 gradient-text">✨ AI Evaluation</h3>
+        <div class="text-center mb-6">
+         <p class="text-sm text-gray-600 mb-2">Overall Performance</p>
+         <div id="interviewOverall" class="score-badge score-excellent">
+          ...
+         </div>
+         <p id="interviewTranscriptPreview" class="text-xs text-gray-500 mt-2"></p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+         <div class="bg-white p-4 rounded-lg border border-purple-100 text-center">
+          <div class="text-3xl mb-2">
+           💭
+          </div>
+          <p class="font-semibold text-gray-700 mb-1">Nội dung</p>
+          <p id="interviewContent" class="text-2xl font-bold text-pink-600">0/10</p>
+         </div>
+         <div class="bg-white p-4 rounded-lg border border-purple-100 text-center">
+          <div class="text-3xl mb-2">
+           🎯
+          </div>
+          <p class="font-semibold text-gray-700 mb-1">Logic</p>
+          <p id="interviewLogic" class="text-2xl font-bold text-pink-600">0/10</p>
+         </div>
+         <div class="bg-white p-4 rounded-lg border border-purple-100 text-center">
+          <div class="text-3xl mb-2">
+           📚
+          </div>
+          <p class="font-semibold text-gray-700 mb-1">Ngôn ngữ</p>
+          <p id="interviewLanguage" class="text-2xl font-bold text-pink-600">0/10</p>
+         </div>
+        </div><!-- Detailed Analysis -->
+        <div class="space-y-4">
+         <div class="bg-white p-4 rounded-lg border-l-4 border-green-500">
+          <p class="font-semibold text-green-700 mb-2">✅ Điểm mạnh:</p>
+          <ul id="interviewStrengths" class="text-gray-700 space-y-1 text-sm"></ul>
+         </div>
+         <div class="bg-white p-4 rounded-lg border-l-4 border-yellow-500">
+          <p class="font-semibold text-yellow-700 mb-2">💡 Cơ hội cải thiện:</p>
+          <ul id="interviewImprovements" class="text-gray-700 space-y-1 text-sm"></ul>
+         </div>
+         <div class="bg-white p-4 rounded-lg border-l-4 border-purple-500">
+          <p class="font-semibold text-purple-700 mb-2">🎓 Phân tích chi tiết:</p>
+          <div id="interviewAnalysis" class="text-gray-700 text-sm space-y-2"></div>
+         </div>
+         <div class="bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded-lg border border-pink-200">
+          <p class="font-semibold text-pink-700 mb-2">🌟 Đánh giá tổng quan:</p>
+          <p id="interviewOverallText" class="text-gray-700 text-sm"></p>
+         </div>
+        </div>
+        <div class="flex gap-4 mt-6"><button onclick="getNewQuestion('interview')" class="flex-1 btn-pink text-white py-3 rounded-xl font-semibold"> Chủ đề tiếp theo → </button> <button onclick="hideFeedback('interview')" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors"> Thử lại </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </main>
+  </div>
+  <script>
+    const defaultConfig = {
+      page_title: "Luyện Speaking",
+      mode1_title: "IELTS Speaking Practice",
+      mode1_desc: "Luyện tập với câu hỏi IELTS Speaking Part 1, 2, 3. Nhận feedback chi tiết về phát âm, từ vựng và ngữ pháp.",
+      mode2_title: "Interview Practice",
+      mode2_desc: "Ứng xử với các tình huống, chủ đề xã hội và quan điểm cá nhân. 60 giây chuẩn bị và trình bày ý kiến của bạn!",
+      primary_color: "#ec4899",
+      secondary_color: "#f472b6",
+      accent_color: "#f43f5e",
+      text_color: "#1f2937",
+      background_color: "#fce7f3"
+    };
+
+    // IELTS Questions Database
+    const ieltsQuestions = [
+      {
+        part: 1,
+        question: "Do you enjoy spending time with your family? Why or why not?",
+        vocab: ["quality time", "bond", "cherish", "relationship"]
+      },
+      {
+        part: 1,
+        question: "What kind of music do you like to listen to?",
+        vocab: ["genre", "melody", "rhythm", "passionate"]
+      },
+      {
+        part: 2,
+        question: "Describe a book that you have read recently. You should say: what the book was about, why you decided to read it, what you learned from it.",
+        vocab: ["fascinating", "plot", "character development", "insightful"]
+      },
+      {
+        part: 2,
+        question: "Describe a place you have visited that left a strong impression on you.",
+        vocab: ["memorable", "breathtaking", "cultural heritage", "atmosphere"]
+      },
+      {
+        part: 3,
+        question: "How do you think technology has changed the way people communicate?",
+        vocab: ["instant messaging", "social media", "face-to-face", "digital age"]
+      },
+      {
+        part: 3,
+        question: "What are the advantages and disadvantages of living in a big city?",
+        vocab: ["urban", "infrastructure", "opportunities", "cost of living"]
+      }
+    ];
+
+    // Interview Topics Database
+    const interviewTopics = [
+      {
+        topic: "Social Media & Mental Health",
+        question: "Theo bạn, mạng xã hội ảnh hưởng như thế nào đến sức khỏe tinh thần của giới trẻ? Bạn có giải pháp gì để sử dụng mạng xã hội một cách lành mạnh?"
+      },
+      {
+        topic: "Climate Change & Personal Responsibility",
+        question: "Bạn nghĩ mỗi cá nhân có trách nhiệm gì trong việc bảo vệ môi trường? Hãy chia sẻ những hành động cụ thể bạn đã hoặc có thể làm."
+      },
+      {
+        topic: "Work-Life Balance",
+        question: "Trong thời đại công nghệ 4.0, việc cân bằng giữa công việc và cuộc sống cá nhân ngày càng khó khăn. Bạn giải quyết vấn đề này như thế nào?"
+      },
+      {
+        topic: "Education System Reform",
+        question: "Hệ thống giáo dục hiện tại có cần thay đổi không? Bạn đề xuất những cải cách nào để giáo dục phù hợp hơn với thế kỷ 21?"
+      },
+      {
+        topic: "Artificial Intelligence & Jobs",
+        question: "AI đang thay thế nhiều công việc của con người. Làm thế nào chúng ta có thể chuẩn bị cho tương lai việc làm?"
+      },
+      {
+        topic: "Cultural Preservation",
+        question: "Trong bối cảnh toàn cầu hóa, làm sao để giữ gìn và phát huy bản sắc văn hóa dân tộc?"
+      },
+      {
+        topic: "Online Learning vs Traditional Education",
+        question: "Học trực tuyến có thể thay thế hoàn toàn giáo dục truyền thống không? Ưu và nhược điểm của mỗi hình thức là gì?"
+      },
+      {
+        topic: "Youth Leadership",
+        question: "Bạn nghĩ gì về vai trò của giới trẻ trong việc dẫn dắt thay đổi xã hội? Làm thế nào để thanh niên có tiếng nói mạnh mẽ hơn?"
+      }
+    ];
+
+    const API_BASE = "http://localhost:5000/api";
+
+    let recordingMode = null;
+    let recordingInterval = null;
+    let recordingSeconds = 0;
+    let countdownInterval = null;
+    let countdownSeconds = 60;
+    let recognition = null;
+    let transcriptBuffer = "";
+    let mediaRecorder = null;
+    let mediaChunks = [];
+    let lastAudioBlob = null;
+
+    const supportsSTT = ("webkitSpeechRecognition" in window) || ("SpeechRecognition" in window);
+
+    const ellipsis = (str, n = 120) => str.length > n ? str.slice(0, n) + "..." : str;
+
+    const getAuthHeaders = () => {
+      const token = localStorage.getItem("token");
+      if (!token) return {};
+      return { Authorization: `Bearer ${token}` };
+    };
+
+    // Section navigation
+    function showSection(sectionId) {
+      const sections = ['menu', 'mode1', 'mode2'];
+      sections.forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+      });
+      document.getElementById(sectionId).classList.remove('hidden');
+      document.getElementById(sectionId).classList.add('fade-in');
+
+      // Start countdown for interview mode
+      if (sectionId === 'mode2') {
+        startCountdown();
+      }
+    }
+
+    // Get new question
+    function getNewQuestion(mode) {
+      if (mode === 'ielts') {
+        const q = ieltsQuestions[Math.floor(Math.random() * ieltsQuestions.length)];
+        document.getElementById('ieltsQuestionText').textContent = q.question;
+        
+        const partLabels = ['Part 1', 'Part 2', 'Part 3'];
+        const partColors = ['bg-pink-500', 'bg-rose-500', 'bg-red-500'];
+        const partLabel = document.querySelector('#ieltsQuestion .bg-pink-500, #ieltsQuestion .bg-rose-500, #ieltsQuestion .bg-red-500');
+        partLabel.className = `px-3 py-1 ${partColors[q.part - 1]} text-white rounded-lg font-semibold text-sm`;
+        partLabel.textContent = partLabels[q.part - 1];
+        
+        const vocabContainer = document.getElementById('vocabHints');
+        vocabContainer.innerHTML = q.vocab.map(v => 
+          `<span class="px-3 py-1 bg-pink-50 text-pink-700 rounded-full text-sm">${v}</span>`
+        ).join('');
+        
+        hideFeedback('ielts');
+      } else if (mode === 'interview') {
+        const topic = interviewTopics[Math.floor(Math.random() * interviewTopics.length)];
+        document.getElementById('interviewTopicText').textContent = topic.topic;
+        document.getElementById('interviewQuestionText').textContent = topic.question;
+        
+        hideFeedback('interview');
+        startCountdown();
+      }
+    }
+
+    // Countdown timer for interview mode
+    function startCountdown() {
+      countdownSeconds = 60;
+      document.getElementById('countdownText').textContent = countdownSeconds;
+      document.getElementById('interviewTimer').classList.remove('hidden');
+      document.getElementById('interviewRecordingStatus').classList.add('hidden');
+      document.getElementById('interviewWaveform').classList.add('hidden');
+      
+      const recordBtn = document.getElementById('interviewRecordBtn');
+      recordBtn.disabled = true;
+      recordBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      
+      if (countdownInterval) clearInterval(countdownInterval);
+      
+      countdownInterval = setInterval(() => {
+        countdownSeconds--;
+        document.getElementById('countdownText').textContent = countdownSeconds;
+        
+        const progress = ((60 - countdownSeconds) / 60) * 360;
+        document.getElementById('timerProgress').style.transform = `rotate(${progress}deg)`;
+        
+        if (countdownSeconds <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById('interviewTimer').classList.add('hidden');
+          recordBtn.disabled = false;
+          recordBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          recordBtn.textContent = '🎙️ Start Recording';
+        }
+      }, 1000);
+    }
+
+    // Recording + STT + feedback (browser speech-to-text with fallback)
+    async function initMedia() {
+      if (mediaRecorder) return;
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) mediaChunks.push(e.data);
+      };
+      mediaRecorder.onstop = () => {
+        if (mediaChunks.length) {
+          lastAudioBlob = new Blob(mediaChunks, { type: "audio/webm" });
+        }
+      };
+    }
+
+    function initRecognition() {
+      if (recognition || !supportsSTT) return;
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.lang = "en-US";
+      recognition.interimResults = true;
+      recognition.continuous = true;
+      recognition.onresult = (event) => {
+        let finalText = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          finalText += event.results[i][0].transcript + " ";
+        }
+        transcriptBuffer = (transcriptBuffer + " " + finalText).trim();
+      };
+      recognition.onerror = () => {
+        // fallback to manual transcript
+      };
+    }
+
+    function toggleRecording(mode) {
+      if (recordingMode) return;
+      initRecognition();
+      transcriptBuffer = "";
+      recordingMode = mode;
+      recordingSeconds = 0;
+
+      initMedia().catch(() => {
+        // Nếu không có mic, vẫn cho nhập tay sau khi stop
+      });
+
+      if (mode === 'ielts') {
+        document.getElementById('ieltsRecordBtn').classList.add('hidden');
+        document.getElementById('ieltsStopBtn').classList.remove('hidden');
+        document.getElementById('ieltsRecordingStatus').classList.add('recording');
+        document.getElementById('ieltsRecordTime').classList.remove('hidden');
+        document.getElementById('ieltsWaveform').classList.remove('hidden');
+      } else {
+        document.getElementById('interviewRecordBtn').classList.add('hidden');
+        document.getElementById('interviewStopBtn').classList.remove('hidden');
+        document.getElementById('interviewRecordingStatus').classList.remove('hidden');
+        document.getElementById('interviewRecordingStatus').classList.add('recording');
+        document.getElementById('interviewWaveform').classList.remove('hidden');
+      }
+
+      if (recognition) {
+        try { recognition.start(); } catch (e) { /* ignore double start */ }
+      }
+      if (mediaRecorder) {
+        mediaChunks = [];
+        try { mediaRecorder.start(); } catch (e) { /* ignore */ }
+      }
+
+      recordingInterval = setInterval(() => {
+        recordingSeconds++;
+        const minutes = Math.floor(recordingSeconds / 60);
+        const seconds = recordingSeconds % 60;
+        const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        if (mode === 'ielts') {
+          document.getElementById('ieltsRecordTime').textContent = timeStr;
+        } else {
+          document.getElementById('interviewRecordTime').textContent = timeStr;
+        }
+      }, 1000);
+    }
+
+    function stopRecording(mode) {
+      if (!recordingMode) return;
+
+      clearInterval(recordingInterval);
+      if (recognition) {
+        try { recognition.stop(); } catch (e) { /* ignore */ }
+      }
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        try { mediaRecorder.stop(); } catch (e) { /* ignore */ }
+      }
+      const captured = transcriptBuffer.trim();
+      recordingMode = null;
+
+      if (mode === 'ielts') {
+        document.getElementById('ieltsRecordBtn').classList.remove('hidden');
+        document.getElementById('ieltsStopBtn').classList.add('hidden');
+        document.getElementById('ieltsRecordingStatus').classList.remove('recording');
+        document.getElementById('ieltsWaveform').classList.add('hidden');
+        document.getElementById('ieltsQuestion').classList.add('hidden');
+        document.getElementById('ieltsFeedback').classList.remove('hidden');
+        submitSpeaking('ielts', captured);
+      } else {
+        document.getElementById('interviewRecordBtn').classList.remove('hidden');
+        document.getElementById('interviewStopBtn').classList.add('hidden');
+        document.getElementById('interviewRecordingStatus').classList.add('hidden');
+        document.getElementById('interviewRecordingStatus').classList.remove('recording');
+        document.getElementById('interviewWaveform').classList.add('hidden');
+        document.getElementById('interviewQuestion').classList.add('hidden');
+        document.getElementById('interviewFeedback').classList.remove('hidden');
+        submitSpeaking('interview', captured);
+      }
+    }
+
+    function hideFeedback(mode) {
+      if (mode === 'ielts') {
+        document.getElementById('ieltsFeedback').classList.add('hidden');
+        document.getElementById('ieltsQuestion').classList.remove('hidden');
+        document.getElementById('ieltsRecordTime').classList.add('hidden');
+        document.getElementById('ieltsRecordTime').textContent = '00:00';
+      } else {
+        document.getElementById('interviewFeedback').classList.add('hidden');
+        document.getElementById('interviewQuestion').classList.remove('hidden');
+        document.getElementById('interviewRecordTime').textContent = '00:00';
+        startCountdown();
+      }
+    }
+
+    // --------- AI-like scoring (heuristic, client-side fallback) ----------
+    const fillerWords = ["um", "uh", "like", "you know", "err", "à", "ừm"];
+    const fallbackText = "Không nhận được âm thanh. Nhập câu trả lời của bạn:";
+
+    function setBar(id, score, max = 9) {
+      const el = document.getElementById(id);
+      if (el) el.style.width = `${Math.min(100, (score / max) * 100)}%`;
+    }
+
+    function renderList(id, items) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = items.map(i => `<li>• ${i}</li>`).join("");
+    }
+
+    function renderChips(id, items) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = items.map(i => `<span class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-semibold">${i}</span>`).join("");
+    }
+
+    function evaluateIelts(text) {
+      const words = text.trim().split(/\s+/).filter(Boolean);
+      const len = words.length;
+      const unique = new Set(words.map(w => w.toLowerCase())).size;
+      const fillerCount = words.filter(w => fillerWords.includes(w.toLowerCase())).length;
+
+      const base = Math.min(8.5, Math.max(5, 4 + len / 40 + unique / 50));
+      const fluency = Math.max(5, Math.min(9, base - fillerCount * 0.1));
+      const vocabScore = Math.max(5, Math.min(9, 5 + unique / 30));
+      const grammar = Math.max(5, Math.min(9, base - 0.2));
+      const pron = Math.max(5, Math.min(9, base - 0.1));
+      const overall = Math.round(((fluency + vocabScore + grammar + pron) / 4) * 10) / 10;
+
+      const strengths = [];
+      if (vocabScore >= 7.5) strengths.push("Từ vựng đa dạng, dùng đúng ngữ cảnh");
+      if (fluency >= 7.5) strengths.push("Nói trôi chảy, ít ngập ngừng");
+      if (grammar >= 7.0) strengths.push("Cấu trúc câu ổn, có câu phức");
+      if (pron >= 7.0) strengths.push("Phát âm dễ hiểu, nhấn trọng âm ổn");
+      if (!strengths.length) strengths.push("Giữ nhịp nói ổn định và nội dung rõ ràng");
+
+      const improvements = [];
+      if (fillerCount > 2) improvements.push("Giảm filler words (um, uh), ngừng nhẹ thay vì lặp lại");
+      if (vocabScore < 7) improvements.push("Thêm collocations và từ nối (moreover, however, in contrast)");
+      if (grammar < 7) improvements.push("Tăng câu phức: because, although, which/that...");
+      if (pron < 7) improvements.push("Luyện nối âm và trọng âm câu để tự nhiên hơn");
+      if (!improvements.length) improvements.push("Tiếp tục luyện nói đều giọng và mở rộng ý sâu hơn");
+
+      const vocabUsed = Array.from(new Set(words.filter(w => w.length > 5))).slice(0, 6);
+
+      document.getElementById('ieltsBandScore').textContent = overall.toFixed(1);
+      document.getElementById('ieltsTranscriptPreview').textContent = ellipsis(text || "(chưa có nội dung)", 160);
+      document.getElementById('ieltsPron').textContent = pron.toFixed(1);
+      document.getElementById('ieltsFluency').textContent = fluency.toFixed(1);
+      document.getElementById('ieltsVocabScore').textContent = vocabScore.toFixed(1);
+      document.getElementById('ieltsGrammar').textContent = grammar.toFixed(1);
+      setBar('ieltsPronBar', pron);
+      setBar('ieltsFluencyBar', fluency);
+      setBar('ieltsVocabBar', vocabScore);
+      setBar('ieltsGrammarBar', grammar);
+      renderList('ieltsStrengths', strengths);
+      renderList('ieltsImprovements', improvements);
+      renderChips('ieltsVocabUsed', vocabUsed.length ? vocabUsed : ["practice", "fluency", "coherence"]);
+    }
+
+    function evaluateInterview(text) {
+      const words = text.trim().split(/\s+/).filter(Boolean);
+      const len = words.length;
+      const unique = new Set(words.map(w => w.toLowerCase())).size;
+      const hasExamples = /for example|for instance|e\.g\./i.test(text);
+      const hasStructure = /first|second|finally|in conclusion|to sum up/i.test(text);
+
+      const content = Math.min(10, Math.max(6, 5 + len / 60 + (hasExamples ? 1 : 0)));
+      const logic = Math.min(10, Math.max(6, 6 + (hasStructure ? 1.5 : 0) + unique / 80));
+      const language = Math.min(10, Math.max(6, 6 + unique / 70));
+
+      const overallText = content >= 8 && logic >= 8 ? "Xuất sắc" : content >= 7 ? "Tốt" : "Cần cải thiện";
+
+      const strengths = [];
+      if (hasStructure) strengths.push("Bố cục có mở–thân–kết, dùng từ nối rõ ràng");
+      if (hasExamples) strengths.push("Có ví dụ minh họa giúp tăng tính thuyết phục");
+      if (unique > 70) strengths.push("Từ vựng phong phú, ít lặp lại");
+      if (!strengths.length) strengths.push("Nội dung mạch lạc và dễ theo dõi");
+
+      const improvements = [];
+      if (!hasStructure) improvements.push("Thêm từ nối (firstly, moreover, on the other hand, finally) để rõ ý");
+      if (!hasExamples) improvements.push("Bổ sung ví dụ thực tế hoặc số liệu để tăng sức nặng lập luận");
+      if (language < 8) improvements.push("Dùng thêm collocations/topic vocabulary để nâng tông ngôn ngữ");
+      if (!improvements.length) improvements.push("Đào sâu hơn vào quan điểm cá nhân và phản biện");
+
+      const analysis = [];
+      analysis.push(`<p><strong>Cấu trúc:</strong> ${hasStructure ? "Đã có mở–thân–kết rõ" : "Cần thêm từ nối và kết luận rõ ràng"}</p>`);
+      analysis.push(`<p><strong>Ví dụ:</strong> ${hasExamples ? "Có ví dụ minh họa" : "Bổ sung 1-2 ví dụ cụ thể"}</p>`);
+      analysis.push(`<p><strong>Độ dài:</strong> ${len} từ – ${len < 80 ? "hãy nói dài hơn (>= 90 từ)" : "độ dài ổn"}</p>`);
+
+      document.getElementById('interviewOverall').textContent = overallText;
+      document.getElementById('interviewTranscriptPreview').textContent = ellipsis(text || "(chưa có nội dung)", 160);
+      document.getElementById('interviewContent').textContent = `${content.toFixed(1)}/10`;
+      document.getElementById('interviewLogic').textContent = `${logic.toFixed(1)}/10`;
+      document.getElementById('interviewLanguage').textContent = `${language.toFixed(1)}/10`;
+      renderList('interviewStrengths', strengths);
+      renderList('interviewImprovements', improvements);
+      document.getElementById('interviewAnalysis').innerHTML = analysis.join("");
+      document.getElementById('interviewOverallText').textContent = overallText === "Xuất sắc"
+        ? "Bạn đã có lập luận chắc và ngôn ngữ tốt. Tiếp tục duy trì nhịp độ và thêm chiều sâu ví dụ."
+        : "Hãy thêm ví dụ, từ nối và mở rộng ý để câu trả lời thuyết phục hơn.";
+    }
+
+    // ---------- Submit to backend (audio + transcript) with fallback ----------
+    async function submitSpeaking(mode, transcript) {
+      let text = transcript && transcript.trim();
+      if (!text) {
+        text = prompt(fallbackText) || "";
+      }
+
+      const question =
+        mode === "ielts"
+          ? document.getElementById('ieltsQuestionText').textContent
+          : document.getElementById('interviewQuestionText').textContent;
+
+      const form = new FormData();
+      form.append("mode", mode);
+      form.append("question", question);
+      form.append("transcript", text);
+      if (lastAudioBlob) {
+        form.append("audio", lastAudioBlob, "speech.webm");
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/speaking/eval`, {
+          method: "POST",
+          headers: { ...getAuthHeaders() },
+          body: form,
+        });
+        if (!res.ok) throw new Error("Backend error");
+        const data = await res.json();
+        if (mode === "ielts") {
+          applyIeltsResult(data);
+        } else {
+          applyInterviewResult(data);
+        }
+      } catch (err) {
+        // fallback client-side
+        if (mode === "ielts") {
+          evaluateIelts(text);
+        } else {
+          evaluateInterview(text);
+        }
+      }
+    }
+
+    function applyIeltsResult(data) {
+      const band = data.band ?? data.score ?? 0;
+      const pron = data.pronunciation ?? 0;
+      const fluency = data.fluency ?? 0;
+      const vocab = data.vocabulary ?? 0;
+      const grammar = data.grammar ?? 0;
+      const transcript = data.transcript || "";
+      const strengths = data.strengths || [];
+      const improvements = data.improvements || [];
+      const vocabUsed = data.vocabUsed || [];
+
+      document.getElementById('ieltsBandScore').textContent = Number(band).toFixed(1);
+      document.getElementById('ieltsTranscriptPreview').textContent = ellipsis(transcript || "(chưa có nội dung)", 160);
+      document.getElementById('ieltsPron').textContent = Number(pron).toFixed(1);
+      document.getElementById('ieltsFluency').textContent = Number(fluency).toFixed(1);
+      document.getElementById('ieltsVocabScore').textContent = Number(vocab).toFixed(1);
+      document.getElementById('ieltsGrammar').textContent = Number(grammar).toFixed(1);
+      setBar('ieltsPronBar', pron);
+      setBar('ieltsFluencyBar', fluency);
+      setBar('ieltsVocabBar', vocab);
+      setBar('ieltsGrammarBar', grammar);
+      renderList('ieltsStrengths', strengths);
+      renderList('ieltsImprovements', improvements);
+      renderChips('ieltsVocabUsed', vocabUsed.length ? vocabUsed : ["practice", "fluency", "coherence"]);
+    }
+
+    function applyInterviewResult(data) {
+      const transcript = data.transcript || "";
+      const overall = data.overall || "Tốt";
+      const content = data.content ?? 0;
+      const logic = data.logic ?? 0;
+      const language = data.language ?? 0;
+      const strengths = data.strengths || [];
+      const improvements = data.improvements || [];
+      const analysis = data.analysis || [];
+      const summary = data.summary || "";
+
+      document.getElementById('interviewOverall').textContent = overall;
+      document.getElementById('interviewTranscriptPreview').textContent = ellipsis(transcript || "(chưa có nội dung)", 160);
+      document.getElementById('interviewContent').textContent = `${Number(content).toFixed(1)}/10`;
+      document.getElementById('interviewLogic').textContent = `${Number(logic).toFixed(1)}/10`;
+      document.getElementById('interviewLanguage').textContent = `${Number(language).toFixed(1)}/10`;
+      renderList('interviewStrengths', strengths);
+      renderList('interviewImprovements', improvements);
+      document.getElementById('interviewAnalysis').innerHTML = analysis.map(a => `<p>${a}</p>`).join("") || "";
+      document.getElementById('interviewOverallText').textContent = summary || "Tiếp tục thêm ví dụ và từ nối để thuyết phục hơn.";
+    }
+
+    // Element SDK
+    async function onConfigChange(config) {
+      document.getElementById('pageTitle').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('mode1Title').textContent = config.mode1_title || defaultConfig.mode1_title;
+      document.getElementById('mode1Desc').textContent = config.mode1_desc || defaultConfig.mode1_desc;
+      document.getElementById('mode2Title').textContent = config.mode2_title || defaultConfig.mode2_title;
+      document.getElementById('mode2Desc').textContent = config.mode2_desc || defaultConfig.mode2_desc;
+      
+      const primaryColor = config.primary_color || defaultConfig.primary_color;
+      const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+      
+      document.querySelectorAll('.gradient-text').forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${config.accent_color || defaultConfig.accent_color} 100%)`;
+        el.style.webkitBackgroundClip = 'text';
+        el.style.webkitTextFillColor = 'transparent';
+        el.style.backgroundClip = 'text';
+      });
+      
+      document.querySelectorAll('.btn-pink').forEach(el => {
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (value) => {
+              config.secondary_color = value;
+              window.elementSdk.setConfig({ secondary_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["page_title", config.page_title || defaultConfig.page_title],
+        ["mode1_title", config.mode1_title || defaultConfig.mode1_title],
+        ["mode1_desc", config.mode1_desc || defaultConfig.mode1_desc],
+        ["mode2_title", config.mode2_title || defaultConfig.mode2_title],
+        ["mode2_desc", config.mode2_desc || defaultConfig.mode2_desc]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b203cc334a520e3',t:'MTc2NjQxMjk5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

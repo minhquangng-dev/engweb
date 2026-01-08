@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  profile   Profile?
+  vocab     UserVocab[]
+  assessments Assessment[]
+  tests     Test[]
+  speaking  SpeakingSession[]
+  activities Activity[]
+  achievements Achievement[]
+}
+
+model Profile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  goal        String
+  levelCefr   String
+  timezone    String
+  dailyTarget Int
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model VocabWord {
+  id        String @id @default(uuid())
+  word      String
+  meaning   String
+  levelCefr String
+  topic     String
+
+  users UserVocab[]
+}
+
+model UserVocab {
+  id        String   @id @default(uuid())
+  userId    String
+  vocabId   String
+  status    String
+  nextReview DateTime
+
+  user  User @relation(fields: [userId], references: [id])
+  vocab VocabWord @relation(fields: [vocabId], references: [id])
+}
+
+model Assessment {
+  id             String   @id @default(uuid())
+  userId         String
+  totalQuestions Int
+  finalLevel     String?
+  finalScore     Float?
+  createdAt      DateTime @default(now())
+
+  items          AssessmentItem[]
+
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model AssessmentItem {
+  id             String   @id @default(uuid())
+  assessmentId   String
+  question       String
+  options        Json
+  correctAnswer  String
+  userAnswer     String?
+  isCorrect      Boolean?
+  difficulty     Int
+  skillTag       String
+
+  assessment     Assessment @relation(fields: [assessmentId], references: [id])
+}
+
+model Test {
+  id        String   @id @default(uuid())
+  userId    String
+  score     Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  items TestItem[]
+}
+
+model TestItem {
+  id      String @id @default(uuid())
+  testId  String
+  prompt  String
+  correct Boolean
+
+  test Test @relation(fields: [testId], references: [id])
+}
+
+model SpeakingSession {
+  id        String   @id @default(uuid())
+  userId    String
+  mode      String
+  transcript String
+  score     Float
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  score     Float?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Achievement {
+  id        String   @id @default(uuid())
+  userId    String
+  code      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Request {
+  id        String   @id @default(uuid())
+  type      String
+  name      String?
+  email     String?
+  phone     String?
+  level     String?
+  timeslot  String?
+  message   String?
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
